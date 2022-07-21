@@ -24,8 +24,13 @@ router.get('/authTest',async(req,res)=>{
 
 router.post('/register',async(req:any,res:any)=>{
     try {
-        const {Name,Email,ContactInfo,Married,Age} = req.body
-        console.log(req)
+        const {Name,Email,ContactInfo,Married,Age} = req.parsedBody
+
+        const isEmailAlreadyRegistered = await user.findOne({Email})
+        if(isEmailAlreadyRegistered){
+            return res.setStatus(400).json({data:"This Email already there.",error:true})
+        }
+        console.log(req.parsedBody)
         let User:UserSchema = {
             Name,
             Email,
