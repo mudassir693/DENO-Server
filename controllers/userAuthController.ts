@@ -1,6 +1,7 @@
 import db from '../config/DB_Config.ts'
 
 import bcrypt from '../config/b-crypt.ts'
+import jwt from '../config/JWT.ts'
 
 const user = db.collection('users')
 
@@ -53,8 +54,9 @@ export const userLogin = async(req:any,res:any)=>{
          if(!passwordMatch){
             return res.setStatus(400).json({data:"Wrong Password."})
          }
+         const token = await jwt.create({ alg: "HS512", typ: "JWT" },{ Email:isUserThere.Email ,_id: isUserThere._id },"secret")
          const {Password:string ,...others} = isUserThere
-         return res.setStatus(200).json({data:others})
+         return res.setStatus(200).json({data:{others,token}})
     } catch (error) {
         console.log('loginError: ',error);
         return res.setStatus(400).json({data:error})
