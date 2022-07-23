@@ -49,7 +49,7 @@ export const userLogin = async(req:any,res:any)=>{
          if(!isUserThere){
             return res.setStatus(400).json({data:"This Email is Not Registered."})
          }
-         const passwordMatch = bcrypt.compare(Password,isUserThere.Password)
+         const passwordMatch = await bcrypt.compare(Password,isUserThere.Password)
          if(!passwordMatch){
             return res.setStatus(400).json({data:"Wrong Password."})
          }
