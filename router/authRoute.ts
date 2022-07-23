@@ -1,15 +1,7 @@
 import { Router } from "https://deno.land/x/opine@2.2.0/mod.ts";
-import db from '../config/DB_Config.ts'
+// import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import {userLogin,userRegister} from '../controllers/userAuthController.ts'
 
-const user = db.collection('users')
-
-interface UserSchema {
-    Name: string;
-    Email: string;
-    ContactInfo: string;
-    Married: boolean;
-    Age: number;
-}
 
 const router = new Router();
 
@@ -22,30 +14,8 @@ router.get('/authTest',async(req,res)=>{
     }
 })
 
-router.post('/register',async(req:any,res:any)=>{
-    try {
-        const {Name,Email,ContactInfo,Married,Age} = req.parsedBody
+router.post('/register',userRegister)
 
-        const isEmailAlreadyRegistered = await user.findOne({Email})
-        if(isEmailAlreadyRegistered){
-            return res.setStatus(400).json({data:"This Email already there.",error:true})
-        }
-        console.log(req.parsedBody)
-        let User:UserSchema = {
-            Name,
-            Email,
-            ContactInfo,
-            Married,
-            Age
-        }
-
-        const resp = await user.insertOne(User)
-        return res.setStatus(201).json({data:resp,error:false})
-
-    } catch (error) {
-        console.log('error: ',error)
-        return res.setStatus(500).json({data:'There is some thing wrong in Adding User.'})
-    }
-})
+router.post('/login',userLogin)
 
 export default router
